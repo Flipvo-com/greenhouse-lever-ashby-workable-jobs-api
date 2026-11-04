@@ -1,11 +1,11 @@
-# Get every Greenhouse, Lever, Ashby and Workable job, with salary, in one API call
+# Get every Greenhouse, Lever, Ashby, Workable, Recruitee and Personio job, with salary, in one API call
 
-Most tech companies post their jobs on one of four applicant-tracking systems (ATS): **Greenhouse**, **Lever**, **Ashby**
-or **Workable**. All four publish open jobs through a free public API, but each one returns a different shape, and
+Most tech companies post their jobs on an applicant-tracking system (ATS) such as **Greenhouse**, **Lever**, **Ashby**,
+**Workable**, **Recruitee** or **Personio**. All six publish open jobs through a free public API, but each one returns a different shape, and
 salary is usually buried in the description text. This repo shows two ways to get them:
 
 1. **Do it yourself** with the free public endpoints (below). This is the right choice for one company and one platform.
-2. **One call for any mix of companies**, with a single schema across all four platforms, salary read from the text when
+2. **One call for any mix of companies**, with a single schema across all six platforms, salary read from the text when
    the structured field is empty, and a "what changed since last run" mode. That uses the
    [ATS Jobs API with Salary](https://apify.com/flipvo/ats-jobs-scraper) Actor on Apify.
 
@@ -14,7 +14,7 @@ salary is usually buried in the description text. This repo shows two ways to ge
 
 ## 1. The free public endpoints
 
-No key needed. Each returns JSON. All four returned 200 on 2026-11-04.
+No key needed. Each returns JSON, except Personio's XML feed. All six returned 200 on 2026-11-04.
 
 | Platform | Endpoint | Example board |
 |---|---|---|
@@ -22,16 +22,18 @@ No key needed. Each returns JSON. All four returned 200 on 2026-11-04.
 | Lever | `https://api.lever.co/v0/postings/{slug}?mode=json` | `spotify` |
 | Ashby | `https://api.ashbyhq.com/posting-api/job-board/{slug}?includeCompensation=true` | `ashby` |
 | Workable | `https://apply.workable.com/api/v1/widget/accounts/{slug}` | `hirefellows` |
+| Recruitee | `https://{slug}.recruitee.com/api/offers/` | `channable` |
+| Personio | `https://{slug}.jobs.personio.de/xml` (XML; some companies are on `.jobs.personio.com`) | `lanch` |
 
 ```bash
 curl -s https://boards-api.greenhouse.io/v1/boards/airbnb/jobs | jq '.jobs[] | {title, location: .location.name, url: .absolute_url}'
 ```
 
-What you still have to build yourself: finding which platform and slug a company uses, mapping four schemas into one,
+What you still have to build yourself: finding which platform and slug a company uses, mapping six schemas (one of them XML) into one,
 pulling the salary out of the description when there's no structured field, pacing requests (Lever's `robots.txt`
 asks for a 1-second crawl delay), retrying 429s, and working out what's new or closed since yesterday.
 
-## 2. One call for all four
+## 2. One call for all six
 
 ```bash
 pip install "apify-client==2.5.1"
@@ -44,7 +46,7 @@ python example.py
 ```python
 run = client.actor("flipvo/ats-jobs-scraper").call(
     run_input={
-        "boards": ["airbnb", "lever:spotify", "ashby:ashby", "workable:hirefellows"],
+        "boards": ["airbnb", "lever:spotify", "ashby:ashby", "workable:hirefellows", "recruitee:channable"],
         "keywords": ["engineer"],
         "onlyWithSalary": True,
         "maxJobsPerBoard": 25,
@@ -60,7 +62,7 @@ A `boards` entry can be a company name (`airbnb`), a careers-page URL, a board U
 
 ### What one row looks like
 
-From a real run on 2026-11-04, with the input above and `maxJobsPerBoard: 5` (all 15 rows are in [`sample-output.json`](sample-output.json)):
+From a real run on 2026-11-04 with the first four boards above and `maxJobsPerBoard: 5` (all 15 rows are in [`sample-output.json`](sample-output.json)):
 
 ```json
 {
@@ -79,6 +81,11 @@ From a real run on 2026-11-04, with the input above and `maxJobsPerBoard: 5` (al
 ```
 
 **No Workable rows in that sample:** on 2026-11-04, neither `hirefellows` nor `huggingface` (both on Workable) had a job with a published salary, so `onlyWithSalary` filtered them all out. A run on `hirefellows` without the salary filter returns its jobs normally; 3 real rows from it are in [`sample-output-workable.json`](sample-output-workable.json).
+
+**Recruitee and Personio:** a run on `recruitee:channable` and `personio:lanch` (6 real rows in
+[`sample-output-recruitee-personio.json`](sample-output-recruitee-personio.json)) gave Channable's structured salaries,
+for example *Senior Engineering Manager - Core*, 100,000-120,000 EUR/year. Lanch's Personio feed published no pay that
+day, so its rows have no salary.
 
 Spotify fills in no structured pay field on Lever, so this range was read from the job text. The print loop in `example.py`, run over that dataset, shows (in part):
 

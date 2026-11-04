@@ -1,4 +1,4 @@
-"""Every open job, with salary, from Greenhouse, Lever, Ashby and Workable boards, in one call.
+"""Every open job, with salary, from Greenhouse, Lever, Ashby, Workable, Recruitee and Personio boards, in one call.
 
     pip install "apify-client==2.5.1"
     export APIFY_TOKEN=...   # https://console.apify.com/settings/integrations
@@ -14,7 +14,7 @@ client = ApifyClient(os.environ["APIFY_TOKEN"])
 run = client.actor("flipvo/ats-jobs-scraper").call(
     run_input={
         # A company name, a careers URL, a board URL, or platform:slug. Mix platforms freely.
-        "boards": ["airbnb", "lever:spotify", "ashby:ashby", "workable:hirefellows"],
+        "boards": ["airbnb", "lever:spotify", "ashby:ashby", "workable:hirefellows", "recruitee:channable"],
         "keywords": ["engineer"],
         "onlyWithSalary": True,
         "maxJobsPerBoard": 25,

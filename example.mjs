@@ -1,4 +1,4 @@
-// Every open job, with salary, from Greenhouse, Lever, Ashby and Workable boards, in one call.
+// Every open job, with salary, from Greenhouse, Lever, Ashby, Workable, Recruitee and Personio boards, in one call.
 //   npm install apify-client@2.25.0
 //   APIFY_TOKEN=... node example.mjs
 import { ApifyClient } from 'apify-client';
@@ -6,7 +6,7 @@ import { ApifyClient } from 'apify-client';
 const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
 
 const run = await client.actor('flipvo/ats-jobs-scraper').call({
-    boards: ['airbnb', 'lever:spotify', 'ashby:ashby', 'workable:hirefellows'],
+    boards: ['airbnb', 'lever:spotify', 'ashby:ashby', 'workable:hirefellows', 'recruitee:channable'],
     keywords: ['engineer'],
     onlyWithSalary: true,
     maxJobsPerBoard: 25,
