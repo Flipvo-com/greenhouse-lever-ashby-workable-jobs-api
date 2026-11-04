@@ -105,6 +105,18 @@ published pay has no salary.
 since the previous run of the same boards, plus a free `closed` row for every job that has left the board. Run it from
 cron, GitHub Actions or an Apify Schedule to feed a job board, a Slack alert or a hiring-signal list.
 
+## Use it from an AI agent (MCP)
+
+Apify's hosted MCP server can expose the Actor as one tool to Claude, Cursor or any other MCP client. Add this server
+URL to the client and sign in with your Apify account:
+
+```
+https://mcp.apify.com/?actors=flipvo/ats-jobs-scraper
+```
+
+The tool is listed as `flipvo--ats-jobs-scraper`. No argument is required, so the agent can call it at once and add
+`boards`, `keywords` or `onlyChanges` as it needs. Setup details: [Apify MCP docs](https://docs.apify.com/integrations/mcp).
+
 ## Pricing
 
 The Actor charges per job delivered. Filtered-out jobs and `closed` rows are free. The current price is on the
