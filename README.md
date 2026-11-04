@@ -108,10 +108,10 @@ cron, GitHub Actions or an Apify Schedule to feed a job board, a Slack alert or 
 ## Use it from an AI agent (MCP)
 
 Apify's hosted MCP server can expose the Actor as one tool to Claude, Cursor or any other MCP client. Add this server
-URL to the client and sign in with your Apify account:
+URL to the client. On first connection a browser opens to sign in to Apify (OAuth), or you can send your API token as a Bearer header:
 
 ```
-https://mcp.apify.com/?actors=flipvo/ats-jobs-scraper
+https://mcp.apify.com?tools=flipvo/ats-jobs-scraper
 ```
 
 The tool is listed as `flipvo--ats-jobs-scraper`. No argument is required, so the agent can call it at once and add
