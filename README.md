@@ -29,6 +29,12 @@ No key needed. Each returns JSON, except Personio's XML feed. All six returned 2
 curl -s https://boards-api.greenhouse.io/v1/boards/airbnb/jobs | jq '.jobs[] | {title, location: .location.name, url: .absolute_url}'
 ```
 
+Per-platform guides, with the fields, parameters and where each one keeps the salary:
+[Greenhouse](docs/greenhouse-job-board-api.md) (pay needs `pay_transparency=true`),
+[Lever](docs/lever-postings-api.md), [Ashby](docs/ashby-job-board-api.md) (`includeCompensation=true`),
+[Workable](docs/workable-jobs-api.md), [Recruitee](docs/recruitee-offers-api.md) and
+[Personio](docs/personio-xml-feed.md).
+
 What you still have to build yourself: finding which platform and slug a company uses, mapping six schemas (one of them XML) into one,
 pulling the salary out of the description when there's no structured field, pacing requests (Lever's `robots.txt`
 asks for a 1-second crawl delay), retrying 429s, and working out what's new or closed since yesterday.
