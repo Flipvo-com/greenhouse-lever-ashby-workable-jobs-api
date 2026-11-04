@@ -78,6 +78,8 @@ From a real run on 2026-11-04, with the input above and `maxJobsPerBoard: 5` (al
 }
 ```
 
+**No Workable rows in that sample:** on 2026-11-04, neither `hirefellows` nor `huggingface` (both on Workable) had a job with a published salary, so `onlyWithSalary` filtered them all out. A run on `hirefellows` without the salary filter returns its jobs normally; 3 real rows from it are in [`sample-output-workable.json`](sample-output-workable.json).
+
 Spotify fills in no structured pay field on Lever, so this range was read from the job text. The print loop in `example.py`, run over that dataset, shows (in part):
 
 ```
